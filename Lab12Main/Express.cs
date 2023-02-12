@@ -42,7 +42,7 @@ namespace Lab12Main
                 sb.Append("- ]");
             }
             return sb.ToString();
-        }
+        }        
 
         public override bool Equals(object? obj)
         {
@@ -50,7 +50,8 @@ namespace Lab12Main
             {
                 if (obj is Express e)
                 {
-                    return Equals(this.name, e.name) && Equals(this.power, e.power) && Equals(this.cars, e.cars) && Equals(this.stationsToSkip, e.stationsToSkip);
+                    //return Equals(this.name, e.name) && Equals(this.power, e.power) && Equals(this.cars, e.cars) && Equals(this.stationsToSkip, e.stationsToSkip);
+                    return Equals(this.ToString(), e.ToString());
                 }
             }
             return false;

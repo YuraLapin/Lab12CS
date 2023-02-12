@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,13 @@ namespace Lab12Main
         public Node? prev;
         public Node? next;
         public Transport? data;
+
+        public Node()
+        {
+            prev = null;
+            next = null;
+            data = null;
+        }
     }
 
     public class CycledList: IEnumerable<Transport>, ICollection<Transport>
@@ -30,33 +38,48 @@ namespace Lab12Main
         }
 
        public void Add(Transport t)
-       {
+       {           
             if (start == null)
             {
                 Count = 1;
                 start = new Node();
-                start.data = new Transport(t);
                 start.next = start;
                 start.prev = start;
             }
             else
             {
                 ++Count;
-                var newNode = new Node();
-                newNode.data = new Transport(t);
+                var newNode = new Node();                             
                 newNode.next = start;
                 newNode.prev = start.prev;
                 start.prev.next = newNode;
                 start.prev = newNode;
+                start = newNode;
+            }            
+            if (t is Express express)
+            {
+                start.data = new Express(express);
             }
-       }
+            else if (t is Train train)
+            {
+                start.data = new Train(train);
+            }
+            else 
+            {
+                start.data = new Transport(t);
+            }
+        }
 
         public void Print()
         {
-            Console.WriteLine("[");
+            Console.WriteLine("[");            
             foreach(Transport t in this)
             {
                 t.Print();
+            }
+            if (Count == 0)
+            {
+                Console.WriteLine("-");
             }
             Console.WriteLine("]");
         }
@@ -82,7 +105,7 @@ namespace Lab12Main
                     arr[i] = curNode.data;
                     curNode = curNode.next;
                 }
-            }
+            }            
             return new ListEnum(arr);
         }
 
@@ -106,7 +129,7 @@ namespace Lab12Main
         {
             foreach(Transport t in this)
             {
-                if (t.CompareTo(toFind) == 0)
+                if (t.Equals(toFind))
                 {
                     return true;
                 }
@@ -134,9 +157,35 @@ namespace Lab12Main
                 if (Contains(t))
                 {
                     var curNode = start;
-                    while (!Equals(curNode.data, t))
+                    int i = 0;
+                    if (t is Express express)
                     {
-                        curNode = curNode.next;
+                        while (!(curNode.data is Express) || !curNode.data.Equals(express))
+                        {
+                            curNode = curNode.next;
+                            ++i;
+                        }
+                    }
+                    else if (t is Train train)
+                    {
+                        while (!(curNode.data is Train) || !curNode.data.Equals(train))
+                        {
+                            curNode = curNode.next;
+                            ++i;
+                        }
+                    }
+                    else
+                    {
+                        while (!curNode.data.Equals(t))
+                        {
+                            curNode = curNode.next;
+                            ++i;
+                        }
+
+                    }
+                    if (i == 0)
+                    {
+                        start = start.next;
                     }
                     curNode.data = null;
                     curNode.next.prev = curNode.prev;

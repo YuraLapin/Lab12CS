@@ -28,7 +28,7 @@ namespace Lab12Main
         public override string ToString()
         {
             return name.ToString() + ": power - " + power.ToString() + ", cars - " + cars.ToString();
-        }
+        }        
 
         public override bool Equals(object? obj)
         {
@@ -36,7 +36,8 @@ namespace Lab12Main
             {
                 if (obj is Train t)
                 {
-                    return Equals(this.name, t.name) && Equals(this.power, t.power) && Equals(this.cars, t.cars);
+                    //return Equals(this.name, t.name) && Equals(this.power, t.power) && Equals(this.cars, t.cars);
+                    return Equals(this.ToString(), t.ToString());
                 }
             }
             return false;

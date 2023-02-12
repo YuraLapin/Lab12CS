@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lab12Main
 {
-    public class Transport: IComparable
+    public class Transport
     {
         public string name;
         public int power;
@@ -39,21 +39,7 @@ namespace Lab12Main
         public void Print()
         {
             Console.WriteLine(this.ToString());
-        }               
-
-        public int CompareTo(object? obj)
-        {
-            if (obj != null)
-            {
-                int res = 0;
-                if (obj is Transport c)
-                {
-                    res = string.Compare(this.name, c.name);
-                }
-                return res;
-            }
-            return 0;
-        } 
+        }       
         
         public override bool Equals(object? obj)
         {
@@ -61,7 +47,8 @@ namespace Lab12Main
             {
                 if (obj is Transport t)
                 {
-                    return Equals(this.name, t.name) && Equals(this.power, t.power);
+                    //return Equals(this.name, t.name) && Equals(this.power, t.power);
+                    return Equals(this.ToString(), t.ToString());
                 }
             }
             return false;
