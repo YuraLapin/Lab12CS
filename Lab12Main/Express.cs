@@ -41,7 +41,7 @@ namespace Lab12Main
             {
                 sb.Append("- ]");
             }
-            return sb.ToString();
+            return GetType() + " " + sb.ToString();
         }        
 
         public override bool Equals(object? obj)

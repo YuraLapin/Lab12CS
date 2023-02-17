@@ -27,7 +27,7 @@ namespace Lab12Main
 
         public override string ToString()
         {
-            return name.ToString() + ": power - " + power.ToString() + ", cars - " + cars.ToString();
+            return GetType() + " " + name.ToString() + ": power - " + power.ToString() + ", cars - " + cars.ToString();
         }        
 
         public override bool Equals(object? obj)

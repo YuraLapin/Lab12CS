@@ -37,36 +37,75 @@ namespace Lab12Main
             set;
         }
 
-       public void Add(Transport t)
-       {           
-            if (start == null)
+        public CycledList()
+        {
+            start = null;
+            Count = 0;
+        }
+
+        public CycledList(int size)
+        {
+            start = null;
+            Count = 0;
+            for (int i = 0; i < size; ++i)
             {
-                Count = 1;
-                start = new Node();
-                start.next = start;
-                start.prev = start;
+                Add(null);
+            }
+        }
+
+        public CycledList(CycledList cl)
+        {
+           foreach (Transport t in cl)
+           {
+                Add(new Transport(t));
+           }
+           IsReadOnly = this.IsReadOnly;
+        }
+
+        public void Add(Transport? t)
+       {       
+            if (t != null)
+            {
+                if (start == null)
+                {
+                    Count = 1;
+                    start = new Node();
+                    start.next = start;
+                    start.prev = start;
+                }
+                else
+                {
+                    ++Count;
+                    var newNode = new Node();
+                    newNode.next = start;
+                    newNode.prev = start.prev;
+                    start.prev.next = newNode;
+                    start.prev = newNode;
+                    start = newNode;
+                }
+                if (t is Express express)
+                {
+                    start.data = new Express(express);
+                }
+                else if (t is Train train)
+                {
+                    start.data = new Train(train);
+                }
+                else
+                {
+                    start.data = new Transport(t);
+                }
             }
             else
             {
-                ++Count;
-                var newNode = new Node();                             
-                newNode.next = start;
-                newNode.prev = start.prev;
-                start.prev.next = newNode;
-                start.prev = newNode;
-                start = newNode;
-            }            
-            if (t is Express express)
-            {
-                start.data = new Express(express);
-            }
-            else if (t is Train train)
-            {
-                start.data = new Train(train);
-            }
-            else 
-            {
-                start.data = new Transport(t);
+                if (start != null)
+                {
+                    start.data = null;
+                }
+                else
+                {
+                    start = new Node();
+                }
             }
         }
 
@@ -84,44 +123,39 @@ namespace Lab12Main
             Console.WriteLine("]");
         }
 
-        IEnumerator<Transport> IEnumerable<Transport>.GetEnumerator()
+        public IEnumerator<Transport> GetEnumerator()
         {
-            return (IEnumerator<Transport>)GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return (IEnumerator)GetEnumerator();
-        }
-
-        public ListEnum GetEnumerator()
-        {
-            var arr = new Transport[Count];
             if (start != null)
             {
                 var curNode = start;
                 for (int i = 0; i < Count; ++i)
                 {
-                    arr[i] = curNode.data;
+                    yield return curNode.data;
                     curNode = curNode.next;
-                }
-            }            
-            return new ListEnum(arr);
+                }                
+            }
+            yield break;
         }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }     
 
         public void Clear()
         {
             if (start != null)
             {
-                var curNode = start;
                 for (int i = 0; i < Count - 1; ++i)
                 {
-                    curNode.data = null;
-                    curNode = curNode.next;
-                    curNode.prev = null;
+                    start.next.prev = start.prev;
+                    start.prev.next = start.next;
+                    start = start.next;
                 }
-                curNode.data = null;
                 Count = 0;
+                start.next = null;
+                start.prev = null;
+                start = null;
             }            
         }
 
@@ -199,12 +233,7 @@ namespace Lab12Main
         
         public void Copy(ref CycledList list)
         {
-            list.Clear();
-            foreach(Transport t in this)
-            {
-                list.Add(new Transport(t));
-            }
-            list.IsReadOnly = this.IsReadOnly;
+            list = new CycledList(this);    
         }
 
         public void ShallowCopy(ref CycledList list)
@@ -212,44 +241,6 @@ namespace Lab12Main
             list.start = this.start;
             list.Count = this.Count;
             list.IsReadOnly = this.IsReadOnly;
-        }
-
-        public class ListEnum: IEnumerator
-        {
-            public Transport[] arr;
-            int position = -1;
-
-            public ListEnum(Transport[] list)
-            {
-                arr = list;
-            }
-
-            public bool MoveNext()
-            {
-                position++;
-                return (position < arr.Length);
-            }
-
-            public void Reset()
-            {
-                position = -1;
-            }
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
-
-            public Transport Current
-            {
-                get
-                {
-                    return arr[position];
-                }
-            }
-        }
+        }        
     }
 }

@@ -33,7 +33,7 @@ namespace Lab12Main
         
         public override string ToString()
         {
-            return name.ToString() + ": power - " + power.ToString();
+            return GetType() + " " + name.ToString() + ": power - " + power.ToString();
         }        
 
         public void Print()

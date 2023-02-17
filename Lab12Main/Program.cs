@@ -7,7 +7,8 @@ namespace Lab12Main
     {
         public const string ERRMSG = "Выбран неверный пункт";
         public const string LINE = "----------------------------------------------------------------------------";
-        public const string MISSING = "Элемент отсутствует в списке";
+        public const string MISSINGMSG = "Элемент отсутствует в списке";
+        public const string SUCCESSMSG = "Элемент успешно удален";
 
         public static Random rand = new Random();
         public static CycledList list = new CycledList();
@@ -92,7 +93,11 @@ namespace Lab12Main
                             int power = UserInteractor.GetIntFromUser("Введите мощность", true);
                             if (!list.Remove(new Transport(name, power)))
                             {
-                                Console.WriteLine(MISSING);
+                                Console.WriteLine(MISSINGMSG);
+                            }
+                            else
+                            {
+                                Console.WriteLine(SUCCESSMSG);
                             }
                             break;
                         }
@@ -104,7 +109,11 @@ namespace Lab12Main
                             int cars = UserInteractor.GetIntFromUser("Введите количество вагонов", true);
                             if (!list.Remove(new Train(name, power, cars)))
                             {
-                                Console.WriteLine(MISSING);
+                                Console.WriteLine(MISSINGMSG);
+                            }
+                            else
+                            {
+                                Console.WriteLine(SUCCESSMSG);
                             }
                             break;
                         }
@@ -123,7 +132,11 @@ namespace Lab12Main
                             }
                             if(!list.Remove(new Express(name, power, cars, stations)))
                             {
-                                Console.WriteLine(MISSING);
+                                Console.WriteLine(MISSINGMSG);
+                            }
+                            else
+                            {
+                                Console.WriteLine(SUCCESSMSG);
                             }
                             break;
                         }
@@ -182,6 +195,7 @@ namespace Lab12Main
         public static int Main()
         {
             Menu();
+
             return 0;
         }
     }
