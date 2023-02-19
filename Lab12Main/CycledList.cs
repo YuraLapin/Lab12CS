@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -63,7 +64,7 @@ namespace Lab12Main
         }
 
         public void Add(Transport? t)
-       {       
+        {       
             if (t != null)
             {
                 if (start == null)
@@ -188,34 +189,15 @@ namespace Lab12Main
         {
             if (start != null)
             {
-                if (Contains(t))
+                int iterations = 0;
+                while (Contains(t))
                 {
                     var curNode = start;
                     int i = 0;
-                    if (t is Express express)
+                    while (!((Transport)curNode.data).Equals(t))
                     {
-                        while (!(curNode.data is Express) || !curNode.data.Equals(express))
-                        {
-                            curNode = curNode.next;
-                            ++i;
-                        }
-                    }
-                    else if (t is Train train)
-                    {
-                        while (!(curNode.data is Train) || !curNode.data.Equals(train))
-                        {
-                            curNode = curNode.next;
-                            ++i;
-                        }
-                    }
-                    else
-                    {
-                        while (!curNode.data.Equals(t))
-                        {
-                            curNode = curNode.next;
-                            ++i;
-                        }
-
+                        curNode = curNode.next;
+                        ++i;
                     }
                     if (i == 0)
                     {
@@ -225,6 +207,10 @@ namespace Lab12Main
                     curNode.next.prev = curNode.prev;
                     curNode.prev.next = curNode.next;
                     --Count;
+                    iterations++;
+                }
+                if (iterations > 0)
+                {
                     return true;
                 }
             }

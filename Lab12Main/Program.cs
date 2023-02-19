@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace Lab12Main
 {
@@ -9,9 +10,20 @@ namespace Lab12Main
         public const string LINE = "----------------------------------------------------------------------------";
         public const string MISSINGMSG = "Элемент отсутствует в списке";
         public const string SUCCESSMSG = "Элемент успешно удален";
+        public const int nameSize = 10;
 
         public static Random rand = new Random();
         public static CycledList list = new CycledList();
+
+        public static string RandomWord(int size, string alphabet = "abcdefghijklmnopqrstuvwxyz0123456789")
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < size; ++i)
+            {
+                sb.Append(alphabet[rand.Next() % alphabet.Count()]);
+            }
+            return sb.ToString();
+        }
 
         public static void AddElement()
         {
@@ -27,34 +39,30 @@ namespace Lab12Main
                 switch (ans)
                 {
                     case 1:
-                        {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
+                        {                            
+                            string name = RandomWord(nameSize);
+                            int power = rand.Next() % 1000;
                             list.Add(new Transport(name, power));
                             break;
                         }
                     case 2:
                         {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
-                            int cars = UserInteractor.GetIntFromUser("Введите количество вагонов", true);
+                            string name = RandomWord(nameSize);
+                            int power = rand.Next() % 1000;
+                            int cars = rand.Next() % 25;
                             list.Add(new Train(name, power, cars));
                             break;
                         }
                     case 3:
                         {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
-                            int cars = UserInteractor.GetIntFromUser("Введите количество вагонов", true);
+                            string name = RandomWord(nameSize);
+                            int power = rand.Next() % 1000;
+                            int cars = rand.Next() % 25;
                             var stations = new List<string>();
-                            int count = UserInteractor.GetIntFromUser("Введите количество станций", true);
+                            int count = rand.Next() % 5 + 1;
                             for (int i = 0; i < count; ++i)
                             {
-                                Console.Write("Введите название станции: ");
-                                stations.Add(Console.ReadLine());
+                                stations.Add("station" + i);
                             }
                             list.Add(new Express(name, power, cars, stations));
                             break;
@@ -75,82 +83,16 @@ namespace Lab12Main
 
         public static void DelElement()
         {
-            bool extFlag = false;
-            while (!extFlag)
+            Console.Write("Введите имя для удаления: ");
+            string name = Console.ReadLine();
+            int power = UserInteractor.GetIntFromUser("Введите мощность для удаления", true);
+            if (!list.Remove(new Transport(name, power)))
             {
-                Console.WriteLine(LINE);
-                Console.WriteLine(" 1 - Удалить Transport");
-                Console.WriteLine(" 2 - Удалить Train");
-                Console.WriteLine(" 3 - Удалить Express");
-                Console.WriteLine(" 4 - Назад");
-                int ans = UserInteractor.GetIntFromUser("Выберите действие [1-4]");
-                switch (ans)
-                {
-                    case 1:
-                        {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
-                            if (!list.Remove(new Transport(name, power)))
-                            {
-                                Console.WriteLine(MISSINGMSG);
-                            }
-                            else
-                            {
-                                Console.WriteLine(SUCCESSMSG);
-                            }
-                            break;
-                        }
-                    case 2:
-                        {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
-                            int cars = UserInteractor.GetIntFromUser("Введите количество вагонов", true);
-                            if (!list.Remove(new Train(name, power, cars)))
-                            {
-                                Console.WriteLine(MISSINGMSG);
-                            }
-                            else
-                            {
-                                Console.WriteLine(SUCCESSMSG);
-                            }
-                            break;
-                        }
-                    case 3:
-                        {
-                            Console.Write("Введите имя: ");
-                            string name = Console.ReadLine();
-                            int power = UserInteractor.GetIntFromUser("Введите мощность", true);
-                            int cars = UserInteractor.GetIntFromUser("Введите количество вагонов", true);
-                            var stations = new List<string>();
-                            int count = UserInteractor.GetIntFromUser("Введите количество станций", true);
-                            for (int i = 0; i < count; ++i)
-                            {
-                                Console.Write("Введите название станции: ");
-                                stations.Add(Console.ReadLine());
-                            }
-                            if(!list.Remove(new Express(name, power, cars, stations)))
-                            {
-                                Console.WriteLine(MISSINGMSG);
-                            }
-                            else
-                            {
-                                Console.WriteLine(SUCCESSMSG);
-                            }
-                            break;
-                        }
-                    case 4:
-                        {
-                            extFlag = true;
-                            break;
-                        }
-                    default:
-                        {
-                            Console.WriteLine(ERRMSG);
-                            break;
-                        }
-                }
+                Console.WriteLine(MISSINGMSG);
+            }
+            else
+            {
+                Console.WriteLine(SUCCESSMSG);
             }
         }
 

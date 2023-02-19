@@ -39,8 +39,8 @@ namespace Lab12Main
         public void Print()
         {
             Console.WriteLine(this.ToString());
-        }       
-        
+        }
+
         public override bool Equals(object? obj)
         {
             if (obj != null)
@@ -48,7 +48,7 @@ namespace Lab12Main
                 if (obj is Transport t)
                 {
                     //return Equals(this.name, t.name) && Equals(this.power, t.power);
-                    return Equals(this.ToString(), t.ToString());
+                    return string.Equals(this.name, t.name) && (this.power == t.power);
                 }
             }
             return false;

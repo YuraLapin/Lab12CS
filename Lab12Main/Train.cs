@@ -30,17 +30,17 @@ namespace Lab12Main
             return GetType() + " " + name.ToString() + ": power - " + power.ToString() + ", cars - " + cars.ToString();
         }        
 
-        public override bool Equals(object? obj)
-        {
-            if (obj != null)
-            {
-                if (obj is Train t)
-                {
-                    //return Equals(this.name, t.name) && Equals(this.power, t.power) && Equals(this.cars, t.cars);
-                    return Equals(this.ToString(), t.ToString());
-                }
-            }
-            return false;
-        }
+        //public override bool Equals(object? obj)
+        //{
+        //    if (obj != null)
+        //    {
+        //        if (obj is Train t)
+        //        {
+        //            //return Equals(this.name, t.name) && Equals(this.power, t.power) && Equals(this.cars, t.cars);
+        //            return Equals(this.ToString(), t.ToString());
+        //        }
+        //    }
+        //    return false;
+        //}
     }
 }
