@@ -24,13 +24,13 @@ namespace Lab12Main
         }
     }
 
-    public class CycledList: IEnumerable<Transport>, ICollection<Transport>
+    public class CycledList<T>: IEnumerable<T>, ICollection<T>
     {
         public Node? start = null;
         public int Count
         {
             get;
-            set;
+            set;//private
         }
         public bool IsReadOnly
         {
@@ -54,7 +54,7 @@ namespace Lab12Main
             }
         }
 
-        public CycledList(CycledList cl)
+        public CycledList(CycledList<T> cl)
         {
            foreach (Transport t in cl)
            {
@@ -217,12 +217,12 @@ namespace Lab12Main
             return false;
         } 
         
-        public void Copy(ref CycledList list)
+        public void Copy(ref CycledList<T> list)
         {
-            list = new CycledList(this);    
+            list = new CycledList<T>(this);    
         }
 
-        public void ShallowCopy(ref CycledList list)
+        public void ShallowCopy(ref CycledList<T> list)
         {
             list.start = this.start;
             list.Count = this.Count;
