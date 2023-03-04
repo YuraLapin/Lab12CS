@@ -1,10 +1,12 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using Lab12Main;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,21 +14,21 @@ namespace Lab12Main
 {
     public class Node<T>
     {
-        public Node<T>? prev;
-        public Node<T>? next;
+        public Node<T>? Prev;
+        public Node<T>? Next;
         public T? data;
 
         public Node()
         {
-            prev = null;
-            next = null;
+            Prev = null;
+            Next = null;
             data = default(T);
         }
     }
 
-    public class CycledList<T>: IEnumerable<T>, ICollection<T> where T: ICloneable<T>, new()
+    public class CycledList<T> : IEnumerable<T>, ICollection<T> where T : ICloneable<T>, new()
     {
-        public Node<T>? start = null;
+        public Node<T>? Start = null;
         public int Count
         {
             get;
@@ -38,15 +40,61 @@ namespace Lab12Main
             set;
         }
 
+        public virtual T? this[int index]
+        {
+            get
+            {
+                if (Start != null)
+                {
+                    var curNode = Start;
+                    for (int i = 0; i < index; ++i)
+                    {
+                        if (curNode.Next == null || curNode.Prev == null)
+                        {
+                            return default(T);
+                        }
+                        curNode = curNode.Next;
+                    }
+                    if (curNode == null)
+                    {
+                        return default(T);
+                    }
+                    return curNode.data;
+                }
+                return default(T);
+            }
+            set
+            {
+                if (Start != null)
+                {
+                    var curNode = Start;
+                    for (int i = 0; i < index; ++i)
+                    {
+                        if (curNode != null)
+                        {
+                            if (curNode.Next != null || curNode.Prev != null)
+                            {
+                                curNode = curNode.Next;
+                            }
+                        }
+                    }
+                    if (curNode != null)
+                    {
+                        curNode.data = value;
+                    }
+                }
+            }
+        }
+
         public CycledList()
         {
-            start = null;
+            Start = null;
             Count = 0;
         }
 
         public CycledList(int size)
         {
-            start = null;
+            Start = null;
             Count = 0;
             for (int i = 0; i < size; ++i)
             {
@@ -63,48 +111,49 @@ namespace Lab12Main
             IsReadOnly = this.IsReadOnly;
         }
 
-        public void Add(T? element)
-        {   if (IsReadOnly)
+        public virtual void Add(T? element)
+        {
+            if (IsReadOnly)
             {
                 return;
             }
             if (element != null)
             {
-                if (start == null)
+                if (Start == null)
                 {
                     Count = 1;
-                    start = new Node<T>();
-                    start.next = start;
-                    start.prev = start;
+                    Start = new Node<T>();
+                    Start.Next = Start;
+                    Start.Prev = Start;
                 }
                 else
                 {
                     ++Count;
                     var newNode = new Node<T>();
-                    newNode.next = start;
-                    newNode.prev = start.prev;
-                    start.prev.next = newNode;
-                    start.prev = newNode;
-                    start = newNode;
+                    newNode.Next = Start;
+                    newNode.Prev = Start.Prev;
+                    Start.Prev.Next = newNode;
+                    Start.Prev = newNode;
+                    Start = newNode;
                 }
                 if (element is T temp)
                 {
-                    start.data = element.Clone();
+                    Start.data = element.Clone();
                 }
                 else
                 {
-                    start.data = (T)element.Clone();
+                    Start.data = (T)element.Clone();
                 }
             }
             else
             {
-                if (start != null)
+                if (Start != null)
                 {
-                    start.data = default(T);
+                    Start.data = default(T);
                 }
                 else
                 {
-                    start = new Node<T>();
+                    Start = new Node<T>();
                 }
             }
         }
@@ -112,14 +161,14 @@ namespace Lab12Main
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("[");
+            sb.Append("[\n");
             foreach (T t in this)
             {
-                sb.Append(t.ToString());
+                sb.Append(t.ToString() + "\n");
             }
             if (Count == 0)
             {
-                sb.Append("-");
+                sb.Append("-\n");
             }
             sb.Append("]");
             return sb.ToString();
@@ -132,14 +181,14 @@ namespace Lab12Main
 
         public IEnumerator<T> GetEnumerator()
         {
-            if (start != null)
+            if (Start != null)
             {
-                var curNode = start;
+                var curNode = Start;
                 for (int i = 0; i < Count; ++i)
                 {
                     yield return curNode.data;
-                    curNode = curNode.next;
-                }                
+                    curNode = curNode.Next;
+                }
             }
             yield break;
         }
@@ -147,7 +196,7 @@ namespace Lab12Main
         IEnumerator IEnumerable.GetEnumerator()
         {
             return (IEnumerator)GetEnumerator();
-        }     
+        }
 
         public void Clear()
         {
@@ -155,28 +204,28 @@ namespace Lab12Main
             {
                 return;
             }
-            if (start != null)
+            if (Start != null)
             {
                 for (int i = 0; i < Count - 1; ++i)
                 {
-                    start.next.prev = start.prev;
-                    start.prev.next = start.next;
-                    start = start.next;
+                    Start.Next.Prev = Start.Prev;
+                    Start.Prev.Next = Start.Next;
+                    Start = Start.Next;
                 }
                 Count = 0;
-                start.next = null;
-                start.prev = null;
-                start = null;
-            }            
+                Start.Next = null;
+                Start.Prev = null;
+                Start = null;
+            }
         }
 
         public bool Contains(T toFind)
         {
-            if (start == null)
+            if (Start == null)
             {
                 return false;
             }
-            foreach(T element in this)
+            foreach (T element in this)
             {
                 if (element.Equals(toFind))
                 {
@@ -191,7 +240,7 @@ namespace Lab12Main
             if (Count + start <= arr.GetLength(0))
             {
                 int i = start;
-                foreach(T element in this)
+                foreach (T element in this)
                 {
                     arr[i] = element.Clone();
                     ++i;
@@ -205,25 +254,25 @@ namespace Lab12Main
             {
                 return false;
             }
-            if (start != null)
+            if (Start != null)
             {
                 int iterations = 0;
                 while (Contains(t))
                 {
-                    var curNode = start;
+                    var curNode = Start;
                     int i = 0;
                     while (!curNode.data.Equals(t))
                     {
-                        curNode = curNode.next;
+                        curNode = curNode.Next;
                         ++i;
                     }
                     if (i == 0)
                     {
-                        start = start.next;
+                        Start = Start.Next;
                     }
                     curNode.data = default(T);
-                    curNode.next.prev = curNode.prev;
-                    curNode.prev.next = curNode.next;
+                    curNode.Next.Prev = curNode.Prev;
+                    curNode.Prev.Next = curNode.Next;
                     --Count;
                     iterations++;
                 }
@@ -233,18 +282,43 @@ namespace Lab12Main
                 }
             }
             return false;
-        } 
-        
+        }
+
+        public virtual bool Remove(int index)
+        {
+            if (IsReadOnly)
+            {
+                return false;
+            }
+            if (Start == null)
+            {
+                return false;
+            }
+            var curNode = Start;
+            for (int i = 0; i < index; ++i)
+            {
+                curNode = curNode.Next;
+            }
+            if (curNode == Start)
+            {
+                Start = curNode.Next;
+            }
+            curNode.Next.Prev = curNode.Prev;
+            curNode.Prev.Next = curNode.Next;
+            --Count;
+            return true;
+        }
+
         public void Copy(ref CycledList<T> list)
         {
-            list = new CycledList<T>(this);    
+            list = new CycledList<T>(this);
         }
 
         public void ShallowCopy(ref CycledList<T> list)
         {
-            list.start = this.start;
+            list.Start = this.Start;
             list.Count = this.Count;
             list.IsReadOnly = this.IsReadOnly;
-        }        
+        }
     }
 }
