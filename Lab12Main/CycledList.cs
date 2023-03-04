@@ -109,18 +109,25 @@ namespace Lab12Main
             }
         }
 
-        public void Print()
+        public override string ToString()
         {
-            Console.WriteLine("[");            
-            foreach(T t in this)
+            var sb = new StringBuilder();
+            sb.Append("[");
+            foreach (T t in this)
             {
-                Console.WriteLine(t.ToString());
+                sb.Append(t.ToString());
             }
             if (Count == 0)
             {
-                Console.WriteLine("-");
+                sb.Append("-");
             }
-            Console.WriteLine("]");
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        public void Print()
+        {
+            Console.WriteLine(ToString());
         }
 
         public IEnumerator<T> GetEnumerator()
