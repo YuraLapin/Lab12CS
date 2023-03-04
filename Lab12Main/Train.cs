@@ -15,12 +15,12 @@ namespace Lab12Main
             cars = 0;
         }
 
-        public Train(in string name, in int maxSpeed, in int cars) : base(name, maxSpeed)
+        public Train(string name, int maxSpeed, int cars) : base(name, maxSpeed)
         {
             this.cars = cars;
         }
 
-        public Train(in Train t): base (t)
+        public Train(Train t): base (t)
         {
             cars = t.cars;
         }        
@@ -42,5 +42,10 @@ namespace Lab12Main
         //    }
         //    return false;
         //}
+
+        public override Train Clone()
+        {
+            return new Train(this);
+        }
     }
 }

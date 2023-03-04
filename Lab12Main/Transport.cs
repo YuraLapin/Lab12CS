@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lab12Main
 {
-    public class Transport
+    public class Transport: ICloneable<Transport>
     {
         public string name;
         public int power;
@@ -19,13 +19,13 @@ namespace Lab12Main
             power = 0;
         }
 
-        public Transport(in string name, in int maxSpeed)
+        public Transport(string name, int maxSpeed)
         {
             this.name = name;
             this.power = maxSpeed;
         }
 
-        public Transport(in Transport t)
+        public Transport(Transport t)
         {
             this.name = t.name;
             this.power = t.power;
@@ -52,6 +52,11 @@ namespace Lab12Main
                 }
             }
             return false;
+        }
+
+        public virtual Transport Clone()
+        {
+            return new Transport(this);
         }
     }
 }

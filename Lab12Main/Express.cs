@@ -15,12 +15,12 @@ namespace Lab12Main
             stationsToSkip = new List<string>();
         }
 
-        public Express(in string name, in int maxSpeed, in int cars, in List<string> stationsToSkip): base(name, maxSpeed, cars)
+        public Express(string name, int maxSpeed, int cars, List<string> stationsToSkip): base(name, maxSpeed, cars)
         {
             this.stationsToSkip = stationsToSkip;
         } 
         
-        public Express(in Express e): base(e)
+        public Express(Express e): base(e)
         {
             this.stationsToSkip = new List<string>(e.stationsToSkip);
         }
@@ -56,5 +56,10 @@ namespace Lab12Main
         //    }
         //    return false;
         //}
+
+        public override Express Clone()
+        {
+            return new Express(this);
+        }
     }
 }

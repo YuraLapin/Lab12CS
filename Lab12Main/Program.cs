@@ -13,7 +13,7 @@ namespace Lab12Main
         public const int nameSize = 10;
 
         public static Random rand = new Random();
-        public static CycledList list = new CycledList();
+        public static CycledList<Transport> list = new CycledList<Transport>();
 
         public static string RandomWord(int size, string alphabet = "abcdefghijklmnopqrstuvwxyz0123456789")
         {

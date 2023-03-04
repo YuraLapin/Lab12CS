@@ -10,27 +10,27 @@ using System.Threading.Tasks;
 
 namespace Lab12Main
 {
-    public class Node
+    public class Node<T>
     {
-        public Node? prev;
-        public Node? next;
-        public Transport? data;
+        public Node<T>? prev;
+        public Node<T>? next;
+        public T? data;
 
         public Node()
         {
             prev = null;
             next = null;
-            data = null;
+            data = default(T);
         }
     }
 
-    public class CycledList<T>: IEnumerable<T>, ICollection<T>
+    public class CycledList<T>: IEnumerable<T>, ICollection<T> where T: ICloneable<T>, new()
     {
-        public Node? start = null;
+        public Node<T>? start = null;
         public int Count
         {
             get;
-            set;//private
+            private set;
         }
         public bool IsReadOnly
         {
@@ -50,62 +50,61 @@ namespace Lab12Main
             Count = 0;
             for (int i = 0; i < size; ++i)
             {
-                Add(null);
+                Add(default(T));
             }
         }
 
-        public CycledList(CycledList<T> cl)
+        public CycledList(CycledList<T> anotherList)
         {
-           foreach (Transport t in cl)
-           {
-                Add(new Transport(t));
-           }
-           IsReadOnly = this.IsReadOnly;
+            foreach (T element in anotherList)
+            {
+                Add((T)element.Clone());
+            }
+            IsReadOnly = this.IsReadOnly;
         }
 
-        public void Add(Transport? t)
-        {       
-            if (t != null)
+        public void Add(T? element)
+        {   if (IsReadOnly)
+            {
+                return;
+            }
+            if (element != null)
             {
                 if (start == null)
                 {
                     Count = 1;
-                    start = new Node();
+                    start = new Node<T>();
                     start.next = start;
                     start.prev = start;
                 }
                 else
                 {
                     ++Count;
-                    var newNode = new Node();
+                    var newNode = new Node<T>();
                     newNode.next = start;
                     newNode.prev = start.prev;
                     start.prev.next = newNode;
                     start.prev = newNode;
                     start = newNode;
                 }
-                if (t is Express express)
+                if (element is T temp)
                 {
-                    start.data = new Express(express);
-                }
-                else if (t is Train train)
-                {
-                    start.data = new Train(train);
+                    start.data = element.Clone();
                 }
                 else
                 {
-                    start.data = new Transport(t);
+                    start.data = (T)element.Clone();
                 }
             }
             else
             {
                 if (start != null)
                 {
-                    start.data = null;
+                    start.data = default(T);
                 }
                 else
                 {
-                    start = new Node();
+                    start = new Node<T>();
                 }
             }
         }
@@ -113,9 +112,9 @@ namespace Lab12Main
         public void Print()
         {
             Console.WriteLine("[");            
-            foreach(Transport t in this)
+            foreach(T t in this)
             {
-                t.Print();
+                Console.WriteLine(t.ToString());
             }
             if (Count == 0)
             {
@@ -124,7 +123,7 @@ namespace Lab12Main
             Console.WriteLine("]");
         }
 
-        public IEnumerator<Transport> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             if (start != null)
             {
@@ -145,6 +144,10 @@ namespace Lab12Main
 
         public void Clear()
         {
+            if (IsReadOnly)
+            {
+                return;
+            }
             if (start != null)
             {
                 for (int i = 0; i < Count - 1; ++i)
@@ -160,11 +163,15 @@ namespace Lab12Main
             }            
         }
 
-        public bool Contains(Transport toFind)
+        public bool Contains(T toFind)
         {
-            foreach(Transport t in this)
+            if (start == null)
             {
-                if (t.Equals(toFind))
+                return false;
+            }
+            foreach(T element in this)
+            {
+                if (element.Equals(toFind))
                 {
                     return true;
                 }
@@ -172,21 +179,25 @@ namespace Lab12Main
             return false;
         }
 
-        public void CopyTo(Transport[] arr, int start)
+        public void CopyTo(T[] arr, int start)
         {
             if (Count + start <= arr.GetLength(0))
             {
                 int i = start;
-                foreach(Transport t in this)
+                foreach(T element in this)
                 {
-                    arr[i] = new Transport(t);
+                    arr[i] = element.Clone();
                     ++i;
                 }
             }
         }
 
-        public bool Remove(Transport t)
+        public bool Remove(T t)
         {
+            if (IsReadOnly)
+            {
+                return false;
+            }
             if (start != null)
             {
                 int iterations = 0;
@@ -194,7 +205,7 @@ namespace Lab12Main
                 {
                     var curNode = start;
                     int i = 0;
-                    while (!((Transport)curNode.data).Equals(t))
+                    while (!curNode.data.Equals(t))
                     {
                         curNode = curNode.next;
                         ++i;
@@ -203,7 +214,7 @@ namespace Lab12Main
                     {
                         start = start.next;
                     }
-                    curNode.data = null;
+                    curNode.data = default(T);
                     curNode.next.prev = curNode.prev;
                     curNode.prev.next = curNode.next;
                     --Count;
